@@ -1,0 +1,30 @@
+
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  db:
+    image: mysql:8.0
+    restart: always
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: sasa
+      MYSQL_DATABASE: microservicios_db
+      MYSQL_PASSWORD: sasa
+    ports:
+      - "3307:3307"
+    volumes:
+      - ./mysql:/var/lib/mysql
+
+  client-person:
+    image: client-person-microservice
+    container_name: client-person
+    ports:
+      - "8080:8080"
+    depends_on:
+      - rabbitmq
+      - db
