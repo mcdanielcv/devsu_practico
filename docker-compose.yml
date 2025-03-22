@@ -28,3 +28,12 @@ services:
     depends_on:
       - rabbitmq
       - db
+
+  account-movement:
+    image: account-movement-microservice
+    container_name: account-movement
+    ports:
+      - "8081:8081"
+    depends_on:
+      - rabbitmq
+      - db
