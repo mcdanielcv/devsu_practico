@@ -1,8 +1,8 @@
 package com.microservicio.account.transaction.account_transaction.controllers;
 
+import com.microservicio.account.transaction.account_transaction.models.ReportDTO;
+import com.microservicio.account.transaction.account_transaction.models.ResponseVo;
 import com.microservicio.account.transaction.account_transaction.services.AccountService;
-import com.microservicio.cuenta.movimiento.cuenta_movimiento.com.microservicio.account.transaction.account_transaction.models.ReportDTO;
-import com.microservicio.cuenta.movimiento.cuenta_movimiento.com.microservicio.account.transaction.account_transaction.models.ResponseVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -28,8 +28,10 @@ public class ReportController {
 
 
     @GetMapping
-    public ResponseEntity<?> getReporteByRange(
-            @RequestParam("fecha") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) List<LocalDate> fecha) {
+    public ResponseEntity<?> getReporteByClientRange(
+            @RequestParam("fecha") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) List<LocalDate> fecha,
+            @RequestParam("cliente")  Long cliente) {
+
         try {
             if (fecha.size() != 2) {
                 throw new IllegalArgumentException("Se deben proporcionar dos fechas en el rango.");
@@ -43,27 +45,11 @@ public class ReportController {
             Date startDate =  Date.from(startLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
             Date endDate =  Date.from(endLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-
-            List<ReportDTO> reporte = accountService.generateReport(startDate, endDate);
+            List<ReportDTO> reporte = accountService.generateReportByClientDateRange(cliente,startDate, endDate);
             return new ResponseEntity<>(reporte, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseVo(false, e.getMessage()));
         }
     }
-
-
-    /*@GetMapping
-    public ResponseEntity<?> getReporteByRangeDate(
-            @RequestParam("clientId") Long clientId,
-            @RequestParam("startDate") String startDate,
-            @RequestParam("endDate") String endDate) {
-        try {
-            List<ReportDTO> reporte = accountService.generateReport(clientId, startDate, endDate);
-            return new ResponseEntity<>(reporte, HttpStatus.OK);
-        } catch (RuntimeException | ParseException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseVo(false, e.getMessage()));
-        }
-    }*/
-  
 }

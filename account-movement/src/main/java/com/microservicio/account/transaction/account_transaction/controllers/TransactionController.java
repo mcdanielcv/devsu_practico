@@ -1,8 +1,8 @@
 package com.microservicio.account.transaction.account_transaction.controllers;
 
+import com.microservicio.account.transaction.account_transaction.models.ResponseVo;
+import com.microservicio.account.transaction.account_transaction.models.TransactionDTO;
 import com.microservicio.account.transaction.account_transaction.services.TransactionService;
-import com.microservicio.cuenta.movimiento.cuenta_movimiento.com.microservicio.account.transaction.account_transaction.models.ResponseVo;
-import com.microservicio.cuenta.movimiento.cuenta_movimiento.com.microservicio.account.transaction.account_transaction.models.TransactionDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

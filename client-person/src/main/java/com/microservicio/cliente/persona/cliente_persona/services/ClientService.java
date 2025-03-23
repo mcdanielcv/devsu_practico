@@ -6,6 +6,7 @@ import com.microservicio.cliente.persona.cliente_persona.models.ClientInputDTO;
 import org.springframework.lang.NonNull;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ClientService {
 
@@ -13,7 +14,7 @@ public interface ClientService {
 
     ClientDTO saveClient(ClientInputDTO client);
 
-    ClientDTO updateClient(ClientInputDTO client, Long id);
+    ClientDTO updateClient(Map<String, Object> actualizaciones, Long id);
 
     ClientDTO deleteClientById(Long id);
 

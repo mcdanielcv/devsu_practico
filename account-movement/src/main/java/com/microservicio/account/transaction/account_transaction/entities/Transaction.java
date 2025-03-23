@@ -18,7 +18,6 @@ public class Transaction {
     private Long numTransaccion;
 
     @NotNull
-    @Column(unique = true)
     private Long accountNumber;
 
     @NotNull

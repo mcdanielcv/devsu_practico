@@ -18,5 +18,6 @@ public class Client extends Person implements Serializable {
     private String password;
     @Column(unique = true)
     private String email;
-    private boolean state;
+    @NotBlank(message = "The state must not be blank")
+    private String state;
 }

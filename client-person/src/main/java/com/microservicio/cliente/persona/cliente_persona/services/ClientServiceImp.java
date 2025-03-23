@@ -1,13 +1,13 @@
 package com.microservicio.cliente.persona.cliente_persona.services;
 
 import com.microservicio.cliente.persona.cliente_persona.entities.Client;
-import com.microservicio.cliente.persona.cliente_persona.exceptions.ClientNotFoundException;
-import com.microservicio.cliente.persona.cliente_persona.exceptions.DuplicateEntryException;
-import com.microservicio.cliente.persona.cliente_persona.exceptions.InternalServerException;
-import com.microservicio.cliente.persona.cliente_persona.exceptions.NoClientsFoundException;
+import com.microservicio.cliente.persona.cliente_persona.exceptions.*;
 import com.microservicio.cliente.persona.cliente_persona.models.ClientDTO;
 import com.microservicio.cliente.persona.cliente_persona.models.ClientInputDTO;
 import com.microservicio.cliente.persona.cliente_persona.repositories.ClientRepository;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.ValidationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.lang.NonNull;
@@ -15,9 +15,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ClientServiceImp implements ClientService {
 
@@ -56,30 +58,51 @@ public class ClientServiceImp implements ClientService {
             clientDb.setPhone(client.getPhone());
             clientDb.setGender(client.getGender());
             clientDb.setAge(client.getAge());
-            clientDb.setState(client.isState());
+            clientDb.setState(client.getState());
             clientDb.setPassword(encryptService.encryptPassword(client.getPassword()));
             ClientDTO clientDTO = ClientMapper.INSTANCE.ClientToDto(clientRepository.save(clientDb));
             //clientProducerService.sendClientMessage(clientDTO.getClientId());
             return clientDTO;
+        } catch (ConstraintViolationException e) {
+            log.error("ingreso a ConstraintViolationException");
+            throw new ConstraintViolationException(e.getConstraintViolations());
         } catch (DataIntegrityViolationException e) {
-            throw new DuplicateEntryException("The client already exists with card Id: " + client.getCardId());
+            log.error("ingreso a DataIntegrityViolationException");
+            if (e.getCause() != null && e.getCause().getMessage().contains("Duplicate entry") && e.getCause().getMessage().contains("UKbfgjs3fem0hmjhvih80158x29")) {
+                throw new DuplicateEmailException("El correo electrónico ya está en uso.");
+            }
+            // Verificar si el error es por ID de tarjeta duplicado
+            else if (e.getCause() != null && e.getCause().getMessage().contains("Duplicate entry") && e.getCause().getMessage().contains("UKccxlhn4kvfl9rcx4pprpd47w3")) {
+                throw new DuplicateCardIdException("El ID de tarjeta ya está en uso.");
+            }
+            // Si no es ninguno de los anteriores, lanzar una excepción genérica
+            throw new RuntimeException("Ocurrió un error en el servidor.");
         } catch (RuntimeException e) {
+            log.error("ingreso a RuntimeException");
             throw new InternalServerException(e.getMessage());
         }
     }
 
     @Transactional
-    public ClientDTO updateClient(ClientInputDTO client, Long id) {
+    public ClientDTO updateClient(Map<String, Object> actualizaciones, Long id) {
         try {
             Client clientDb = getClientDbById(id);
-            clientDb.setName(client.getName());
-            clientDb.setEmail(client.getEmail());
-            clientDb.setAddress(client.getAddress());
-            clientDb.setPhone(client.getPhone());
-            clientDb.setGender(client.getGender());
-            clientDb.setAge(client.getAge());
-            clientDb.setState(client.isState());
-            clientDb.setPassword(encryptService.encryptPassword(client.getPassword()));
+            // Actualizar solo los campos que se proporcionan
+            if (actualizaciones.containsKey("phone")) {
+                clientDb.setName((String) actualizaciones.get("phone"));
+            }
+            if (actualizaciones.containsKey("address")) {
+                clientDb.setAddress((String) actualizaciones.get("address"));
+            }
+
+            if (actualizaciones.containsKey("email")) {
+                clientDb.setAddress((String) actualizaciones.get("email"));
+            }
+
+            if (actualizaciones.containsKey("password")) {
+                clientDb.setPassword(encryptService.encryptPassword((String) actualizaciones.get("password")));
+            }
+
             return ClientMapper.INSTANCE.ClientToDto(clientRepository.save(clientDb));
         } catch (ClientNotFoundException ex) {
             throw new ClientNotFoundException(ex.getMessage());

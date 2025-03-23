@@ -28,5 +28,6 @@ public class ClientInputDTO implements Serializable {
     private String phone;
     @NotBlank(message = "The password must not be blank")
     private String password;
-    private boolean state;
+    @NotBlank(message = "The state must not be blank")
+    private String state;
 }

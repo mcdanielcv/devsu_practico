@@ -1,4 +1,4 @@
-package com.microservicio.cuenta.movimiento.cuenta_movimiento.com.microservicio.account.transaction.account_transaction.models;
+package com.microservicio.account.transaction.account_transaction.models;
 
 import lombok.Getter;
 import lombok.Setter;

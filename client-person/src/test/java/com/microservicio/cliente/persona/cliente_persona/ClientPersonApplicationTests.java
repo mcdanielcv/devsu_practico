@@ -39,7 +39,7 @@ class ClientPersonApplicationTests {
         client.setName("Jose Lema");
         client.setAge(30);
         client.setPassword("9875");
-        client.setState(true);
+        client.setState("true");
     }
 
 
@@ -57,7 +57,7 @@ class ClientPersonApplicationTests {
 				cliente.setName("Jose Lema");
 				cliente.setAge(30);
 				cliente.setPassword("9875");
-				cliente.setState(true);
+				cliente.setState("true");
 
         ObjectMapper objectMapper = new ObjectMapper();
         String clienteJson = objectMapper.writeValueAsString(cliente);

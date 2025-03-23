@@ -6,9 +6,9 @@ import com.microservicio.account.transaction.account_transaction.exceptions.Acco
 import com.microservicio.account.transaction.account_transaction.exceptions.InsufficientFundsException;
 import com.microservicio.account.transaction.account_transaction.exceptions.InternalServerException;
 import com.microservicio.account.transaction.account_transaction.exceptions.NoTransactionsFoundException;
+import com.microservicio.account.transaction.account_transaction.models.TransactionDTO;
 import com.microservicio.account.transaction.account_transaction.repositories.AccountRepository;
 import com.microservicio.account.transaction.account_transaction.repositories.TransactionsRepository;
-import com.microservicio.cuenta.movimiento.cuenta_movimiento.com.microservicio.account.transaction.account_transaction.models.TransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;

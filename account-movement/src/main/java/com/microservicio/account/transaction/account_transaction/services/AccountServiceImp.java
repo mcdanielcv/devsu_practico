@@ -4,11 +4,11 @@ import com.microservicio.account.transaction.account_transaction.configuracion.R
 import com.microservicio.account.transaction.account_transaction.entities.Account;
 import com.microservicio.account.transaction.account_transaction.entities.Transaction;
 import com.microservicio.account.transaction.account_transaction.exceptions.*;
+import com.microservicio.account.transaction.account_transaction.models.AccountDTO;
+import com.microservicio.account.transaction.account_transaction.models.AccountDtoRed;
+import com.microservicio.account.transaction.account_transaction.models.ReportDTO;
 import com.microservicio.account.transaction.account_transaction.repositories.AccountRepository;
 import com.microservicio.account.transaction.account_transaction.repositories.TransactionsRepository;
-import com.microservicio.cuenta.movimiento.cuenta_movimiento.com.microservicio.account.transaction.account_transaction.models.AccountDTO;
-import com.microservicio.cuenta.movimiento.cuenta_movimiento.com.microservicio.account.transaction.account_transaction.models.AccountDtoRed;
-import com.microservicio.cuenta.movimiento.cuenta_movimiento.com.microservicio.account.transaction.account_transaction.models.ReportDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -73,7 +74,7 @@ public class AccountServiceImp implements AccountService {
 
             accountDb.setAccountType(accountDto.getAccountType());
             accountDb.setInitialBalance(accountDto.getInitialBalance());
-            accountDb.setState(accountDto.isState());
+            accountDb.setState(accountDto.getState());
             return AccountMapper.INSTANCE.AccountToDto(accountRepository.save(accountDb));
         } catch (AccountNotFoundException ex) {
             throw new AccountNotFoundException(ex.getMessage());
@@ -98,16 +99,20 @@ public class AccountServiceImp implements AccountService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReportDTO> generateReport(Long clientId, String startDate, String endDate) throws ParseException {
+    public List<ReportDTO> generateReportByClientDateRange(Long clientId, Date startDate, Date endDate) throws ParseException {
         SimpleDateFormat formato = new SimpleDateFormat("dd/M/yyyy");
 
-        Date startDateVo = formato.parse(startDate);
-        Date endDateVo = formato.parse(endDate);
+        Date startDateVo = startDate;
+        Date endDateVo = endDate;
 
         List<Account> accounts = accountRepository.findClientByid(clientId);
+        accounts.sort(Comparator.comparing(Account::getAccountNumber));
+
         return accounts.stream().map(account -> {
             List<Transaction> movements = transactionsRepository.findByCuentaIdAndFechaBetween(account.getAccountNumber(),
                     startDateVo, endDateVo);
+            movements.sort(Comparator.comparing(Transaction::getTransactionDate));
+
             return movements.stream().map(movement -> {
                 ReportDTO reportDTO = new ReportDTO();
                 reportDTO.setNameClient(clientApiService.getNameClientById(clientId));
@@ -117,13 +122,14 @@ public class AccountServiceImp implements AccountService {
                 reportDTO.setInitialBalance(account.getInitialBalance());
                 reportDTO.setTransactionValue(movement.getValue());
                 reportDTO.setAvailableBalance(movement.getBalance());
+                reportDTO.setState(account.getState());
                 return reportDTO;
             }).collect(Collectors.toList());
         }).flatMap(List::stream).collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<ReportDTO> generateReport(Date startDate, Date endDate) throws ParseException {
+    public List<ReportDTO> generateReportDateRange(Date startDate, Date endDate) throws ParseException {
         SimpleDateFormat formato = new SimpleDateFormat("dd/M/yyyy");
 
         List<Integer> idClients = clientApiService.getAllIdClients();
@@ -156,8 +162,8 @@ public class AccountServiceImp implements AccountService {
         System.out.println("Received Message from Cliente Queue: " + clientId);
         AccountDTO accountDTO = new AccountDTO();
         accountDTO.setClientId(clientId);
-        accountDTO.setAccountType("Corrriente");
-        accountDTO.setState(true);
+        accountDTO.setAccountType("Ahorros");
+        accountDTO.setState("true");
         accountDTO.setInitialBalance(0);
         accountDTO.setAvailableBalance(0);
         accountDTO.setAccountNumber(Long.parseLong(accountNumberGeneratorService.generateAccountNumber()));

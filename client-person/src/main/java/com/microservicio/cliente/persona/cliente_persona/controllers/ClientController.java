@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/clients/")
@@ -42,11 +43,10 @@ public class ClientController {
                 new ResponseVo(true, "Cliente registrado", clientService.saveClient(clientInputDTO)));
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<?> updateClientById(@RequestBody @Valid ClientInputDTO client, BindingResult result,
-                                              @PathVariable Long id) {
+    @PatchMapping("{id}")
+    public ResponseEntity<?> updateClientById(@PathVariable Long id,@RequestBody Map<String, Object> actualizaciones, BindingResult result) {
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseVo(true, "Cliente Actualizado", clientService.updateClient(client, id)));
+                new ResponseVo(true, "Cliente Actualizado", clientService.updateClient(actualizaciones, id)));
     }
 
     @DeleteMapping("{id}")

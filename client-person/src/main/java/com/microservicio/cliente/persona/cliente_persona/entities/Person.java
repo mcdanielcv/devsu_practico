@@ -14,6 +14,7 @@ public abstract class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long clientId;
+    @Column(unique = true)
     @NotBlank(message = "The ID must not be blank")
     private String cardId;
     @NotBlank(message = "The name must not be blank")
