@@ -79,11 +79,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-amqp</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.intuit.karate</groupId>
-			<artifactId>karate-core</artifactId>
-			<version>1.4.1</version>
-		</dependency>
+
 		<dependency>
 			<groupId>com.intuit.karate</groupId>
 			<artifactId>karate-junit5</artifactId>

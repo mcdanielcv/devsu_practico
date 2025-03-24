@@ -1,5 +1,4 @@
 package com.microservicio.cliente.persona.cliente_persona;
-
 import com.microservicio.cliente.persona.cliente_persona.entities.Client;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -7,7 +6,6 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Set;
@@ -16,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-@AutoConfigureMockMvc
 class ClientPersonApplicationTests {
 
     private Validator validator;
