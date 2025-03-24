@@ -1,5 +1,11 @@
 # Practico Devsu
 
+## Herramientas
+- Docker desktop v. 4.37.1
+- Mysql workbech v. 8.0
+- IntelliJ Idea Communitary
+- Postman v11.37.5
+
 ## Ejecución Test
 
 - Para ejecutar el test ClientPersonApplicationTests correctamente se debe tener una instancia de la base con la estuctura de la base creada y en el archivo mvn clean install y en el archivo application.properties debe estar configurado la ip y puerto de conexión.
