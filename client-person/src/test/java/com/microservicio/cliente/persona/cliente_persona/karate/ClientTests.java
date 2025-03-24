@@ -1,4 +1,4 @@
-package com.microservicio.cliente.persona.cliente_persona;
+package com.microservicio.cliente.persona.cliente_persona.karate;
 import com.intuit.karate.junit5.Karate;
 
 class ClientTests {
