@@ -2,16 +2,6 @@ CREATE DATABASE microservicios_db;
 
 use microservicios_db;
 
-CREATE TABLE IF NOT EXISTS client (
-  `state` varchar(10) NOT NULL,
-  `client_id` bigint NOT NULL,
-  `email` varchar(255) DEFAULT NULL,
-  `password` varchar(255) NOT NULL,
-  PRIMARY KEY (`client_id`),
-  UNIQUE KEY `UKbfgjs3fem0hmjhvih80158x29` (`email`),
-  CONSTRAINT `FKcxli0sgm0c24a09lfqwoi9wmt` FOREIGN KEY (`client_id`) REFERENCES `person` (`client_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE `person` (
   `age` int NOT NULL,
   `client_id` bigint NOT NULL AUTO_INCREMENT,
@@ -23,6 +13,16 @@ CREATE TABLE `person` (
   PRIMARY KEY (`client_id`),
   UNIQUE KEY `UKccxlhn4kvfl9rcx4pprpd47w3` (`card_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE IF NOT EXISTS client (
+  `state` varchar(10) NOT NULL,
+  `client_id` bigint NOT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`client_id`),
+  UNIQUE KEY `UKbfgjs3fem0hmjhvih80158x29` (`email`),
+  CONSTRAINT `FKcxli0sgm0c24a09lfqwoi9wmt` FOREIGN KEY (`client_id`) REFERENCES `person` (`client_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 CREATE TABLE IF NOT EXISTS account (

@@ -79,15 +79,17 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-amqp</artifactId>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.karatelabs/karate-core -->
 		<dependency>
-			<groupId>com.intuit.karate</groupId>
+			<groupId>io.karatelabs</groupId>
 			<artifactId>karate-core</artifactId>
-			<version>1.4.1</version>
+			<version>1.5.1</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.karatelabs/karate-junit5 -->
 		<dependency>
-			<groupId>com.intuit.karate</groupId>
+			<groupId>io.karatelabs</groupId>
 			<artifactId>karate-junit5</artifactId>
-			<version>1.4.1</version>
+			<version>1.5.1</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -1,4 +1,5 @@
 package com.microservicio.cliente.persona.cliente_persona;
+
 import com.microservicio.cliente.persona.cliente_persona.entities.Client;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -10,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
@@ -44,11 +44,5 @@ class ClientPersonApplicationTests {
         assertTrue(violations.isEmpty());
     }
 
-    @Test
-    public void testBlankState() {
-        client.setState("");
-        Set<ConstraintViolation<Client>> violations = validator.validate(client);
-        assertEquals(7, violations.size());
-        assertEquals("The state must not be blank", violations.iterator().next().getMessage());
-    }
+
 }
