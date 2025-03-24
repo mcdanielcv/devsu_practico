@@ -72,6 +72,12 @@
 			<artifactId>spring-boot-starter-amqp</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.intuit.karate</groupId>
+			<artifactId>karate-junit5</artifactId>
+			<version>1.4.1</version> <!-- Asegúrate de usar la última versión -->
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

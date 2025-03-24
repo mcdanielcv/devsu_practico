@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-
 import java.util.Date;
 
 @Getter
@@ -16,22 +15,15 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long numTransaccion;
-
-    @NotNull
+    @NotNull(message = "The account Number must not be blank")
     private Long accountNumber;
-
-    @NotNull
+    @NotNull(message = "The transaction Date must not be empty")
     @Temporal(TemporalType.DATE)
     private Date transactionDate;
-
-    @NotNull
+    @NotNull(message = "The type Movement must not be blank")
     private String typeMovement;
-
-    @NotNull
+    @NotNull(message = "The value must not be empty")
     private double value;
-
     @NotNull
     private double balance;
-
-
 }

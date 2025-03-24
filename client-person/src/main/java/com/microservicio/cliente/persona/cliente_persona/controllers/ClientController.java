@@ -37,23 +37,29 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ResponseVo(true, "", list));
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<?> saveClient(@RequestBody @Valid ClientInputDTO clientInputDTO, BindingResult result) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                new ResponseVo(true, "Cliente registrado", clientService.saveClient(clientInputDTO)));
+                new ResponseVo(true, "Registered customer", clientService.saveClient(clientInputDTO)));
+    }
+
+    @PostMapping("/register-with-account")
+    public ResponseEntity<?> saveClientWithAccount(@RequestBody @Valid ClientInputDTO clientInputDTO, BindingResult result) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                new ResponseVo(true, "Registered customer with account", clientService.saveClientWithAccount(clientInputDTO)));
     }
 
     @PatchMapping("{id}")
     public ResponseEntity<?> updateClientById(@PathVariable Long id,@RequestBody Map<String, Object> actualizaciones, BindingResult result) {
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseVo(true, "Cliente Actualizado", clientService.updateClient(actualizaciones, id)));
+                new ResponseVo(true, "Updated Client", clientService.updateClient(actualizaciones, id)));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteClientById(@PathVariable Long id) {
         clientService.deleteClientById(id);
         return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponseVo(true, String.format("Cliente Eliminado : %s", id)));
+                new ResponseVo(true, String.format("Deleted Client : %s", id)));
     }
 
     @GetMapping("client/{clientId}")

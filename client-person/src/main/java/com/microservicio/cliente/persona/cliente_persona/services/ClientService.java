@@ -1,6 +1,5 @@
 package com.microservicio.cliente.persona.cliente_persona.services;
 
-import com.microservicio.cliente.persona.cliente_persona.entities.Client;
 import com.microservicio.cliente.persona.cliente_persona.models.ClientDTO;
 import com.microservicio.cliente.persona.cliente_persona.models.ClientInputDTO;
 import org.springframework.lang.NonNull;
@@ -23,4 +22,6 @@ public interface ClientService {
     String getNameClientById(Long clientId);
 
     List<Long> getAllIdClients();
+
+    ClientDTO saveClientWithAccount(ClientInputDTO client);
 }

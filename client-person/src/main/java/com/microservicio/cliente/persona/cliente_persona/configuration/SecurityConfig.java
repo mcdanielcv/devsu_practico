@@ -12,10 +12,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
 @Configuration
 @EnableWebSecurity
+@EnableTransactionManagement
 public class SecurityConfig  {
 
     @Bean

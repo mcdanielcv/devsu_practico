@@ -6,7 +6,6 @@ import com.microservicio.cliente.persona.cliente_persona.models.ClientDTO;
 import com.microservicio.cliente.persona.cliente_persona.models.ClientInputDTO;
 import com.microservicio.cliente.persona.cliente_persona.repositories.ClientRepository;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -60,9 +59,7 @@ public class ClientServiceImp implements ClientService {
             clientDb.setAge(client.getAge());
             clientDb.setState(client.getState());
             clientDb.setPassword(encryptService.encryptPassword(client.getPassword()));
-            ClientDTO clientDTO = ClientMapper.INSTANCE.ClientToDto(clientRepository.save(clientDb));
-            //clientProducerService.sendClientMessage(clientDTO.getClientId());
-            return clientDTO;
+            return ClientMapper.INSTANCE.ClientToDto(clientRepository.save(clientDb));
         } catch (ConstraintViolationException e) {
             log.error("ingreso a ConstraintViolationException");
             throw new ConstraintViolationException(e.getConstraintViolations());
@@ -148,5 +145,41 @@ public class ClientServiceImp implements ClientService {
                 .map(Number::longValue)  // Convierte a Long
                 .collect(Collectors.toList());
         return idsAsLong;
+    }
+
+    @Transactional
+    public ClientDTO saveClientWithAccount(ClientInputDTO client) {
+        try {
+            Client clientDb = new Client();
+            clientDb.setCardId(client.getCardId());
+            clientDb.setName(client.getName());
+            clientDb.setEmail(client.getEmail());
+            clientDb.setAddress(client.getAddress());
+            clientDb.setPhone(client.getPhone());
+            clientDb.setGender(client.getGender());
+            clientDb.setAge(client.getAge());
+            clientDb.setState(client.getState());
+            clientDb.setPassword(encryptService.encryptPassword(client.getPassword()));
+            ClientDTO clientDTO = ClientMapper.INSTANCE.ClientToDto(clientRepository.save(clientDb));
+            clientProducerService.sendClientMessage(clientDTO.getClientId());
+            return clientDTO;
+        } catch (ConstraintViolationException e) {
+            log.error("ingreso a ConstraintViolationException");
+            throw new ConstraintViolationException(e.getConstraintViolations());
+        } catch (DataIntegrityViolationException e) {
+            log.error("ingreso a DataIntegrityViolationException");
+            if (e.getCause() != null && e.getCause().getMessage().contains("Duplicate entry") && e.getCause().getMessage().contains("UKbfgjs3fem0hmjhvih80158x29")) {
+                throw new DuplicateEmailException("El correo electrónico ya está en uso.");
+            }
+            // Verificar si el error es por ID de tarjeta duplicado
+            else if (e.getCause() != null && e.getCause().getMessage().contains("Duplicate entry") && e.getCause().getMessage().contains("UKccxlhn4kvfl9rcx4pprpd47w3")) {
+                throw new DuplicateCardIdException("El ID de tarjeta ya está en uso.");
+            }
+            // Si no es ninguno de los anteriores, lanzar una excepción genérica
+            throw new RuntimeException("Ocurrió un error en el servidor.");
+        } catch (RuntimeException e) {
+            log.error("ingreso a RuntimeException");
+            throw new InternalServerException(e.getMessage());
+        }
     }
 }

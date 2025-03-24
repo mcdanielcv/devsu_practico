@@ -17,6 +17,7 @@ public class Client extends Person implements Serializable {
     @NotBlank(message = "The password must not be blank")
     private String password;
     @Column(unique = true)
+    @NotBlank(message = "The email must not be blank")
     private String email;
     @NotBlank(message = "The state must not be blank")
     private String state;

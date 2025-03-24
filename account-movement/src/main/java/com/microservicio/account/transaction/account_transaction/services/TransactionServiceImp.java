@@ -9,6 +9,7 @@ import com.microservicio.account.transaction.account_transaction.exceptions.NoTr
 import com.microservicio.account.transaction.account_transaction.models.TransactionDTO;
 import com.microservicio.account.transaction.account_transaction.repositories.AccountRepository;
 import com.microservicio.account.transaction.account_transaction.repositories.TransactionsRepository;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class TransactionServiceImp implements TransactionService {
             Account accountDb = accountOptional.orElseThrow(() ->
                     new AccountNotFoundException("Account not found withn Account number: " + transactionDto.getAccountNumber()));
 
-            if (transactionDto.getValue() < 0 && accountDb.getAvailableBalance() < Math.abs(transactionDto.getValue())) {
+            if (accountDb.getAvailableBalance() < Math.abs(transactionDto.getValue())) {
                 throw new InsufficientFundsException("Balance not available in the account.");
             }
             accountDb.setAvailableBalance(accountDb.getInitialBalance() + (1 * transactionDto.getValue()));
@@ -57,6 +58,8 @@ public class TransactionServiceImp implements TransactionService {
             Transaction savedMovimiento = transactionsRepository.save(transaction);
             accountRepository.save(accountDb);
             return TransactionMapper.INSTANCE.transactionToDto(savedMovimiento);
+        } catch (ConstraintViolationException e) {
+            throw new ConstraintViolationException(e.getConstraintViolations());
         } catch (AccountNotFoundException ex) {
             throw new AccountNotFoundException(ex.getMessage());
         } catch (InsufficientFundsException e) {
@@ -77,7 +80,7 @@ public class TransactionServiceImp implements TransactionService {
             Account accountDb = cuentaOptional.orElseThrow(() ->
                     new AccountNotFoundException("Account not found with the Account Number: " + id + " to perform the movement"));
 
-            accountDb.setAvailableBalance(accountDb.getInitialBalance() + ((-1) * movimientoOptional.get().getValue()));
+            accountDb.setAvailableBalance(accountDb.getAvailableBalance() + ((-1) * movimientoOptional.get().getValue()));
             accountRepository.save(accountDb);
             transactionsRepository.deleteById(id);
             return TransactionMapper.INSTANCE.transactionToDto(movimientoOptional.get());
